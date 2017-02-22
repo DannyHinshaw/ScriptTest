@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         ScriptTest - Atom Copy
+// @name         ScriptTest
 // @version      1.3
 // @description  Javascript Performance Tests
-// @author       DjBonadoobie
+// @author       Danny Hinshaw
 // @match        https://www.google.com/scripttest
 // @match        https://www.google.com/
 // ==/UserScript==
