@@ -5,6 +5,7 @@
 // @author       Danny Hinshaw
 // @match        https://www.google.com/scripttest
 // @match        https://www.google.com/
+// @namespace    http://nulleffort.com/
 // ==/UserScript==
 
 (function() {
