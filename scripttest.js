@@ -1,17 +1,11 @@
 // ==UserScript==
-// @name         ScriptTest
-// @version      1.1
+// @name         ScriptTest - Atom Copy
+// @version      0.3
 // @description  Javascript Performance Tests
-// @author       Danny Hinshaw
-// @namespace    http://nulleffort.com/
+// @author       DjBonadoobie
 // @match        https://www.google.com/scripttest
 // @match        https://www.google.com/
 // ==/UserScript==
-
-/****
-Big thanks to feihtality and StubbornlyDesigned 
-for helping me get unstuck multiple times <3
-****/
 
 (function() {
 	'use strict';
@@ -22,7 +16,7 @@ for helping me get unstuck multiple times <3
 		runFlag  : true,
 		errorFlag: false,
 		templates: {
-			favicon   : () => {
+			favicon   : function() {
 				const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
 				link.type  = 'image/x-icon';
 				link.rel   = 'shortcut icon';
@@ -191,7 +185,7 @@ for helping me get unstuck multiple times <3
 							window.parent.dispatchEvent(new Event('perf:load'));
 						});
 					</script>
-					<script id="_script_">`+
+					<script id="_script_">` +
 					/************************ Iframe Performance Function ******************************/
 						`window.addEventListener('perf:exec', e => {
 							const {fn} = e.detail;
@@ -215,7 +209,7 @@ for helping me get unstuck multiple times <3
 			id        : () => {
 				return document.querySelectorAll('textarea').length;
 			},
-			editor    : () => {
+			editor    : function() {
 				// Editor template
 				let editor       = document.createElement('div');
 				editor.id        = 'test_' + TEST_UI.templates.id() + '_div';
@@ -248,7 +242,7 @@ for helping me get unstuck multiple times <3
 		},
 
 		iframe   : {
-			create: (html) => {
+			create: function(html) {
 				const iframe        = document.createElement('iframe');
 				iframe.id           = '__iframe';
 				iframe.srcdoc       = TEST_UI.templates.mainScript;
@@ -259,7 +253,7 @@ for helping me get unstuck multiple times <3
 				return TEST_UI.frameDOM;
 			},
 		},
-		perfFunc : () => {
+		perfFunc : function() {
 
 			console.log('Testing in progress...');
 
@@ -339,7 +333,7 @@ for helping me get unstuck multiple times <3
 			document.getElementById('__iframe').remove();
 			TEST_UI.templates.favicon();
 		},
-		onError  : err => {
+		onError  : function(err) {
 
 			document.getElementById('res-text-cont').style.display     = 'block';
 			document.getElementById('loader_container').style.display  = 'none';
@@ -365,31 +359,29 @@ for helping me get unstuck multiple times <3
 
 		},
 		commands : {
-			loading   : () => {
+			loading   : function() {
 				[].forEach.call(document.querySelectorAll('div.results_row'), r => r.remove());
 
 				document.getElementById('res-text-cont').style.display     = 'none';
 				document.getElementById('loader_container').style.display  = 'block';
 			},
-			removeAll : () => {
+			removeAll : function() {
 				[].forEach.call(document.querySelectorAll('div.js_div ~ div.js_div'), e => e.remove());
 				document.getElementById('test_1').value = "";
 			},
-			removeTest: b => {
+			removeTest: function(b) {
 				b.parentNode.remove();
 			},
-			run       : () => {
+			run       : function() {
 				if (TEST_UI.runFlag) {
-					
 					TEST_UI.commands.loading();
 					TEST_UI.iframe.create(document.querySelector('#html').value);
-					
 					document.getElementById('results_table').style.visibility = 'visible';
 					TEST_UI.runFlag                                           = true;
 				}
 			},
 		},
-		init    : () => {
+		init    : function() {
 
 			console.log('ScriptTest started');
 
@@ -442,7 +434,7 @@ for helping me get unstuck multiple times <3
 	// Initialize
 	if (!window.location.href.includes('scripttest')) {
 		// Add link for ScriptTest to google.com
-		const parentDiv = document.querySelector('div.gb_nf.gb_R.gb_Cf.gb_uf'),
+		const parentDiv = document.querySelector('div.gb_zf.gb_R.gb_Pf.gb_Hf'),
 			  firstBtn  = document.querySelectorAll('div.gb_Q.gb_R')[1],
 			  startBtn  = document.createElement('div');
 
@@ -453,4 +445,5 @@ for helping me get unstuck multiple times <3
 		// Load UI
 		TEST_UI.init();
 	}
+
 })();
