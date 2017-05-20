@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ScriptTest
-// @version      1.4
+// @version      1.5
 // @description  Javascript Performance Tests
 // @author       Danny Hinshaw
 // @match        https://www.google.com/scripttest
@@ -79,7 +79,6 @@
 				              </select>
 					      </div>
                       </div>
-
                       <div class="col-xs-12">
 					    <div class="setting_cont row-xs-6">
 				           <span>Click to add more tests:</span>
@@ -112,7 +111,6 @@
 				    <span>Click to run tests</span>
 				    <button id="start_btn" class="btn btn-outline-primary">Run</button>
 				  </div>
-
 				  <div id="res-text-cont">
 				  	<p id="results_label">Results</p>
 				  	<p id="results_instruct">*The first test is used as a base to compare the rest.</p>
@@ -182,7 +180,6 @@
   position: absolute;
   z-index: 10;
 }
-
 .circle1 {
   display: inline-flex;
   height: 10rem;
@@ -194,7 +191,6 @@
   animation: load 1.5s 0.1s infinite;
   opacity: 0.8;
 }
-
 .circle2 {
   display: inline-flex;
   height: 10rem;
@@ -206,7 +202,6 @@
   animation: load 1.5s 0.2s infinite;
   opacity: 0.8;
 }
-
 .circle3 {
   display: inline-flex;
   height: 10rem;
@@ -218,7 +213,6 @@
   animation: load 1.5s 0.3s infinite;
   opacity: 0.8;
 }
-
 @keyframes load {
   from {
     transform: rotate3d(1,2,3, 0deg);
@@ -242,7 +236,6 @@
 <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 <meta http-equiv="pragma" content="no-cache" />
 ${j}
-
 					<script>
 						window.addEventListener('load', () => {
 							window.parent.dispatchEvent(new Event('perf:load'));
@@ -253,7 +246,6 @@ ${j}
 						`window.addEventListener('perf:exec', e => {
 							const {fn} = e.detail;
 							let t0, t1;
-
 							try {
 								let script = new Function(fn);
 								document.body.innerHTML = window.parent.document.body.querySelector('iframe').dataset.body;
@@ -331,6 +323,23 @@ ${j}
 				  resultTable  = document.getElementById('results_label'),
 				  resultBody   = document.querySelector('.results_body');
 
+			// Check for values in textareas before running further
+			for (let i = 0; i < textarea.length; i++) {
+				const val = textarea[i].value;
+
+				// Handling for UI errors (empty textareas)
+				if (!val) {
+					TEST_UI.onError(textarea[i]);
+					return console.log('Script in', textarea[i].id, 'has no value');
+				} else if (document.getElementById('errDIV')) {
+					TEST_UI.errorFlag = false;
+					document.getElementById('errDIV').remove();
+					[].forEach.call(document.querySelectorAll('textarea:not(#html)'), t => {
+						if (t.style.backgroundColor === 'red')
+							t.style.backgroundColor = "#1d1f20";
+					});
+				}
+			}
 			
 			function genTable(num, id, mean) {
 
@@ -366,21 +375,8 @@ ${j}
 			}
 
 			for (let i = 0; i < textarea.length; i++) {
-
+				
 				const val = textarea[i].value;
-
-				// Handling for UI errors (empty textareas)
-				if (!val) {
-					TEST_UI.onError(textarea[i]);
-					return console.log('Script in', textarea[i].id, 'has no value');
-				} else if (document.getElementById('errDIV')) {
-					TEST_UI.errorFlag = false;
-					document.getElementById('errDIV').remove();
-					[].forEach.call(document.querySelectorAll('textarea:not(#html)'), t => {
-						if (t.style.backgroundColor === 'red')
-							t.style.backgroundColor = "#FAEBD7";
-					});
-				}
 
 				TEST_UI.runners = [];
 				let j           = TEST_UI.iterations;
