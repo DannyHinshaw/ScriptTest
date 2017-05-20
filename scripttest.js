@@ -1,10 +1,9 @@
 // ==UserScript==
 // @name         ScriptTest
-// @version      1.3
+// @version      1.4
 // @description  Javascript Performance Tests
 // @author       Danny Hinshaw
 // @match        https://www.google.com/scripttest
-// @match        https://www.google.com/
 // @namespace    http://nulleffort.com/
 // ==/UserScript==
 
@@ -22,17 +21,34 @@
 				link.type  = 'image/x-icon';
 				link.rel   = 'shortcut icon';
 				link.href  = 'http://nulleffort.com/wp-content/uploads/2016/11/cropped-favicon-32x32.png';
-				document.getElementsByTagName('head')[0].appendChild(link);
+				return document.querySelector('head').appendChild(link);
+			},
+			bootStrap : function() {
+				const bootLink = document.createElement('link');
+				bootLink.rel   = 'stylesheet';
+				bootLink.href  = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
+				const fontLink = document.createElement('link');
+				fontLink.rel   = 'stylesheet';
+				fontLink.href  = 'https://fonts.googleapis.com/css?family=Ubuntu';
+				const links    = [bootLink, fontLink];
+
+				return links.forEach(link => document.querySelector('head').appendChild(link));				
+			},
+			jQueryLib: function() {
+				const jQ1 = `<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>`;
+				const jQ2 = `<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>`;
+				const jQ3 = `<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>`;
+				const lib = document.getElementById('library').value;
+				switch (lib) { case '1': return jQ1; case '2': return jQ2; case '3': return jQ3; default: return ''; }
 			},
 			body      : `
 				<header>
-					<h1>ScriptTest</h1>
+					<h1>< ScriptTest /></h1>
 					<p>We're going the distance... we're going for speed.</p>
 				</header>
 				<main>
 				  <div id="intro">
 					  <div id="instructions">
-				        <h2>USE:</h2>
 				        <p>
 				          To use ScriptTest, enter any html you may need for your test scripts in the html box (not required). Do not worry about headers etc, the html is already set up, you are essentially just entering elements into a body.
 				        </p>
@@ -40,27 +56,42 @@
 				          Add as many test boxes as the Javascript snippets you'd like to test. Each editor will be treated as a separate test case. You do not need to add any loops as ScriptTest will take care of that for you (just select from the settings how many iterations you want for testing).
 				        </p>
 					</div>
-			        <div id="settings">
-			          <h3>Settings</h3>
-					  <div class="setting_cont">
-				          <span> Iterations:</span>
-				          <select id="iterations">
-				            <option value="101">100</option>
-				            <option value="1001">1,000</option>
-				            <option value="10001">10,000</option>
-				            <option value="100001">100,000</option>
-				          </select>
-					  </div>
-					  <div class="setting_cont">
-				          <span>Click to add more tests:</span>
-				          <button id="add_btn">Add Test</button>
-					  </div>
-					  <div class="setting_cont">
-				          <span>Click to remove all tests:</span>
-				          <button id="remove_all_btn">Remove Tests</button>
-					  </div>
-					  <br>
-				      </div>
+              
+                    <div id="settings" class="col-xs-12">
+			          <h3 class="row-xs-12">Settings</h3>
+                      <div class="col-xs-12">
+					      <div class="setting_cont row-xs-6">
+				              <span> Iterations:</span>
+				              <select id="iterations" class="form-control">
+				                <option value="101">100</option>
+				                <option value="1001">1,000</option>
+				                <option value="10001">10,000</option>
+				                <option value="100001">100,000</option>
+				              </select>
+					      </div>
+					      <div class="setting_cont row-xs-6">
+				              <span> Library:</span>
+				              <select id="library" class="form-control">
+				                <option value="0">None</option>
+				                <option value="3">jQuery 3.2.1</option>
+				                <option value="2">jQuery 2.2.4</option>
+				                <option value="1">jQuery 1.12.4</option>
+				              </select>
+					      </div>
+                      </div>
+
+                      <div class="col-xs-12">
+					    <div class="setting_cont row-xs-6">
+				           <span>Click to add more tests:</span>
+				           <button id="add_btn" class="btn btn-outline-primary">Add Test</button>
+					     </div>
+					     <div class="setting_cont row-xs-6">
+				           <span>Click to remove all tests:</span>
+				           <button id="remove_all_btn" class="btn btn-outline-primary">Remove Tests</button>
+					     </div>
+					     <br>
+				       </div>
+                     </div>
 				  </div>
 				  <div id="html_div">
 					  <div class="html_editor">
@@ -79,21 +110,7 @@
 				  <div id="test_commands">
 				  <br>
 				    <span>Click to run tests</span>
-				    <button id="start_btn">Run</button>
-				  </div>
-
-				  <div id="loader_container">
-				  	<div id="block_0" class="barlittle"></div>
-					<div id="block_1" class="barlittle"></div>
-					<div id="block_2" class="barlittle"></div>
-					<div id="block_3" class="barlittle"></div>
-					<div id="block_4" class="barlittle"></div>
-					<div id="block_5" class="barlittle"></div>
-					<div id="block_6" class="barlittle"></div>
-					<div id="block_7" class="barlittle"></div>
-					<div id="block_8" class="barlittle"></div>
-					<div id="block_9" class="barlittle"></div>
-					<div id="block_10" class="barlittle"></div>
+				    <button id="start_btn" class="btn btn-outline-primary">Run</button>
 				  </div>
 
 				  <div id="res-text-cont">
@@ -107,34 +124,45 @@
 				</main>
 				<footer>
 				  <span>This script is currently in beta. There are no gaurantees it will work with your browser... or work at all.</span>
-				</footer>`,
+				</footer>
+  <div id="blackout">
+<div class="circle1"></div>
+<div class="circle2"></div>
+<div class="circle3"></div>
+</div>
+`,
 			css       : `
 				<style>`+
 
 				/***** Main CSS Styles ****/
 
-				   `body { color: white }
-					header { align: left; background-color: #161F2F; box-shadow: 0px 2px 5px #201717; margin: -10px -10px 1px; padding: 25px; }
-					header > h1 { font-family: Rockwell; font-size: 3em; margin-left: 25px;	}
-					header > h1::first-letter { font-size: 2em; }
-					header > p { font-family: Andale Mono, monospace; font-style: italic; margin-left: 25px; }
+				   `body { color: white; overflow-x: hidden; }
+					header { align: left; background-color: #1a1b1c; box-shadow: 0px 2px 5px #201717; margin: -10px -10px 1px; padding: 25px; }
+					header > h1 { color: #72f766; font-family: 'Ubuntu', sans-serif; font-size: 4rem; letter-spacing: .15rem; margin-left: 25px; text-align: center; -webkit-font-smoothing: antialiased }
+					header > p { font-family: 'Ubuntu', sans-serif; font-style: italic; margin-left: 25px; text-align: center; -webkit-font-smoothing: antialiased }
 					body { background-color: #3c434f}
-					main { padding: 25px; font-family: Verdana; letter-spacing: .05em; }
-					#instructions { border-bottom: ridge; }
+					main { padding: 25px; font-family: 'Ubuntu', sans-serif; font-size: 1.5rem; letter-spacing: .05em; }
+                    #instructions { padding-bottom: 2rem; }
 					#instructions > *, #settings > * , #test_commands, #res-text-cont { margin-left: 1.5em; }
 					#html_div > *, div.js_div > * { margin-left: 3em }
 					p { color: #E7DFDD }
 					#settings { display: inline-block; padding-bottom: 1.75em; }
+                    h3 { color: #72f766; }
 					#html_div { border-top: ridge; }
-					div.setting_cont { float: left; padding: .01em; width: auto; }
-					label, textarea { display:block; margin:10px 0; }
-					textarea { background-color: #FAEBD7; font-family: monospace; font-size: 15px; }
+					div.setting_cont { display: inline-block; padding: .5em; width: auto; }
+                    .form-control { display: inline-flex; width: 10rem; }
+                    .btn { background-color: rgb(23, 39, 67); }
+                    .btn.focus, .btn:focus, .btn:hover { color: rgb(183, 202, 184); text-decoration: underline; }
+                    label { color: #72f766; }
+					label, textarea { display: block; margin: 10px 0; }
+					textarea { background-color: #1d1f20; color: #85d17e; font-family: monospace; font-size: 15px; }
 					.js_div { border-top: ridge }
+                    footer { padding: 2rem; }
 					footer > span { font-family: Andale Mono, monospace; font-style: italic; }
 					iframe { display: none }
-					#errDIV { background-color: #800000; border-style: inset; margin-top: 15px; padding: 1px 10px 10px; }
+                    #errDIV { background-color: #800000; border-style: inset; margin-top: 15px; padding: 1px 10px 10px; }
 					#res-text-cont { display: none; }
-					#results_label { font-size: 1.5em; }
+					#results_label { color: #72f766; font-size: 1.5em; padding-top: 3rem; }
 					#results_table { display: table; visibility: hidden; width: 100%; }
 					.results_row { display: table-row }
 					.test_rank > span::after { content: attr(data-rel); margin-left: 5px; }
@@ -142,45 +170,79 @@
 					.results_body { display: table-row-group }`+
 
 				/**** Loader CSS ***/
-				  `#loader_container {
-					  display: none;
-					  margin: 2.5em auto 5em 12em;
-					  width: 100%;
-				  }
-				   .barlittle {
-				       background-color: #0eaa1a;
-				       background-image: -webkit-linear-gradient(45deg, #0eaa1a 25%, #067f0f);
-				       border-left: 1.5px solid #111;
-				       border-top: 1.5px solid #111;
-				       border-right: 1.5px solid #333;
-				       border-bottom: 1.5px solid #333;
-				       width: 14px;
-				       height: 14px;
-				       float: left;
-				       margin-left: 7px;
-				       opacity: 0.1;
-				       -webkit-transform: scale(0.7);
-				       -webkit-animation: move 1s infinite linear;
-				   }
-				   #block_0 { -webkit-animation-delay: .7s; }
-				   #block_1 { -webkit-animation-delay: .6s; }
-				   #block_2 { -webkit-animation-delay: .5s; }
-				   #block_3 { -webkit-animation-delay: .4s; }
-				   #block_4 { -webkit-animation-delay: .3s; }
-				   #block_5 { -webkit-animation-delay: .2s; }
-				   #block_6 { -webkit-animation-delay: .3s; }
-				   #block_7 { -webkit-animation-delay: .4s; }
-				   #block_8 { -webkit-animation-delay: .5s; }
-				   #block_9 { -webkit-animation-delay: .6s; }
-				   #block_10 { -webkit-animation-delay: .7s; }
-				   @-webkit-keyframes move {
-				       0% { -webkit-transform: scale(1.2); opacity: 1; }
-				       100% { -webkit-transform: scale(0.7); opacity: 0.1; }
-				   }
-				</style>`,
-			mainScript: `
+				  `
+#blackout {
+  height: 100%;
+  width: 100%;
+  left:0;
+  bottom:0;
+  background: rgba(61, 59, 59, 0.69);
+  display: none;
+  overflow: hidden;
+  position: absolute;
+  z-index: 10;
+}
+
+.circle1 {
+  display: inline-flex;
+  height: 10rem;
+  width: 10rem;
+  border-radius: 50%;
+  border: .75rem solid rgba(206, 157, 227, 0.66);
+  margin: 40% auto;
+  margin-left: 40%;
+  animation: load 1.5s 0.1s infinite;
+  opacity: 0.8;
+}
+
+.circle2 {
+  display: inline-flex;
+  height: 10rem;
+  width: 10rem;
+  border-radius: 50%;
+  border: .7rem solid rgba(132, 138, 235, 0.64);
+  margin: 0 auto;
+  margin-left: -45px;
+  animation: load 1.5s 0.2s infinite;
+  opacity: 0.8;
+}
+
+.circle3 {
+  display: inline-flex;
+  height: 10rem;
+  width: 10rem;
+  border-radius: 50%;
+  border: .6rem solid rgba(90, 177, 171, 0.64);
+  margin: 0 auto;
+  margin-left: -45px;
+  animation: load 1.5s 0.3s infinite;
+  opacity: 0.8;
+}
+
+@keyframes load {
+  from {
+    transform: rotate3d(1,2,3, 0deg);
+  }
+  
+  50% {
+    transform: rotate3d(1,2,3, 360deg);
+  }
+  
+  to {
+    transform: rotate3d(1,2,3, 0deg);
+  }
+}				</style>`,
+			mainScript: function(j) {
+			return `
 				<html lang="en">
 					<head>
+<meta http-equiv="cache-control" content="max-age=0" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="expires" content="0" />
+<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+<meta http-equiv="pragma" content="no-cache" />
+${j}
+
 					<script>
 						window.addEventListener('load', () => {
 							window.parent.dispatchEvent(new Event('perf:load'));
@@ -193,11 +255,12 @@
 							let t0, t1;
 
 							try {
-								const script = new Function(fn);
+								let script = new Function(fn);
 								document.body.innerHTML = window.parent.document.body.querySelector('iframe').dataset.body;
 								t0 = performance.now();
 								script();
 								t1 = performance.now();
+                                script = null;
 							} catch(err) {
 								const event = new CustomEvent('perf:error', {detail: {error: err}});
 								window.parent.dispatchEvent(event);
@@ -206,7 +269,8 @@
 							const event = new CustomEvent('perf:done', {detail: {time: t1-t0}});
 							e.ownerObject.dispatch(event);
 						});`+
-					'</script> </head> <body></body> </html>',
+					'</script></head><body></body></html>';
+			},
 			id        : () => {
 				return document.querySelectorAll('textarea').length;
 			},
@@ -218,12 +282,15 @@
 				editor.innerHTML = `
 				<div class="js_editor">
 				<label for="test_${TEST_UI.templates.id()}">Javascript Test ${TEST_UI.templates.id()}</label>
-				<button class="remove_btn">Remove Test ${TEST_UI.templates.id()}</button>
+				<button class="btn btn-outline-primary remove_btn">Remove Test ${TEST_UI.templates.id()}</button>
 				<textarea id="test_${TEST_UI.templates.id()}" class="js_editor" placeholder="Enter Javascript" cols="70" rows="15"></textarea>
 				</div>`;
 
+				// Set button styles for focus/blur
+				document.querySelectorAll('button').forEach(button => button.addEventListener("mouseup", e => e.target.blur()));
+				
 				// Dynamic Editor Removal
-				document.getElementsByTagName('main')[0].insertBefore(editor, document.getElementById('test_commands'));
+				document.querySelector('main').insertBefore(editor, document.getElementById('test_commands'));
 				[].forEach.call(document.querySelectorAll('button.remove_btn'), b => b.onclick = () => {
 					b.parentNode.parentNode.remove();
 					rename();
@@ -246,7 +313,7 @@
 			create: function(html) {
 				const iframe        = document.createElement('iframe');
 				iframe.id           = '__iframe';
-				iframe.srcdoc       = TEST_UI.templates.mainScript;
+				iframe.srcdoc       = TEST_UI.templates.mainScript(TEST_UI.templates.jQueryLib());
 				iframe.dataset.body = html;
 
 				document.body.append(iframe);
@@ -264,11 +331,10 @@
 				  resultTable  = document.getElementById('results_label'),
 				  resultBody   = document.querySelector('.results_body');
 
+			
 			function genTable(num, id, mean) {
 
-				document.getElementById('loader_container').style.display = 'none';
-				document.getElementById('res-text-cont').style.display    = 'block';
-
+				TEST_UI.commands.loaded();
 				// Check if table has yet been displayed
 				if (resultTable.offsetParent === null && !TEST_UI.errorFlag) resultTable.style.display = 'block';
 
@@ -296,6 +362,7 @@
 				times.shift();
 				const mean = times.reduce((a, b) => a + b) / TEST_UI.iterations;
 				genTable(num, id, mean);
+				TEST_UI.templates.favicon();
 			}
 
 			for (let i = 0; i < textarea.length; i++) {
@@ -330,15 +397,14 @@
 				}
 				Promise.all(TEST_UI.runners).then(end.bind(null, i, textarea[i].id));
 			}//);
+			
 			TEST_UI.runFlag = true;
 			document.getElementById('__iframe').remove();
-			TEST_UI.templates.favicon();
 		},
 		onError  : function(err) {
 
-			document.getElementById('res-text-cont').style.display     = 'block';
-			document.getElementById('loader_container').style.display  = 'none';
-
+			TEST_UI.commands.loaded();
+			
 			if (document.getElementById('results_label').offsetParent !== null)
 				document.getElementById('results_label').style.display = 'none';
 
@@ -363,8 +429,16 @@
 			loading   : function() {
 				[].forEach.call(document.querySelectorAll('div.results_row'), r => r.remove());
 
-				document.getElementById('res-text-cont').style.display     = 'none';
-				document.getElementById('loader_container').style.display  = 'block';
+				window.scrollTo(0, 0);
+				document.body.style.overflowY                          = 'hidden';
+				document.getElementById('blackout').style.display      = 'block';
+				document.getElementById('res-text-cont').style.display = 'none';
+			},
+			loaded    : function() {
+				document.body.style.overflowY                          = 'auto';
+				document.getElementById('blackout').style.display      = '';
+				document.getElementById('res-text-cont').style.display = 'block';
+				window.scrollTo(0,document.body.scrollHeight);
 			},
 			removeAll : function() {
 				[].forEach.call(document.querySelectorAll('div.js_div ~ div.js_div'), e => e.remove());
@@ -386,17 +460,13 @@
 
 			console.log('ScriptTest started');
 
-			// Set favicon
-			TEST_UI.templates.favicon();
-
-			// Custom window event listener
-			document.getElementsByTagName('style')[0].remove();
-
-			window.addEventListener('perf:load', TEST_UI.perfFunc);
-			window.addEventListener('perf:error', TEST_UI.onError);
+			document.querySelector('style').remove();
 
 			// Setup UI
-			document.head.innerHTML = TEST_UI.templates.css;
+			// Set favicon & BootStrap
+			TEST_UI.templates.favicon();
+			TEST_UI.templates.bootStrap();
+			document.head.innerHTML += TEST_UI.templates.css;
 			document.body.innerHTML = TEST_UI.templates.body;
 			document.title          = 'ScriptTest';
 
@@ -404,6 +474,13 @@
 			document.getElementById('add_btn').onclick        = () => TEST_UI.templates.editor();
 			document.getElementById('remove_all_btn').onclick = () => TEST_UI.commands.removeAll();
 			document.getElementById('start_btn').onclick      = () => TEST_UI.commands.run();
+			
+			// Set button styles for focus/blur
+			document.querySelectorAll('button').forEach(button => button.addEventListener("mouseup", e => e.target.blur()));
+			
+			// Custom window event listener
+			window.addEventListener('perf:load', TEST_UI.perfFunc);
+			window.addEventListener('perf:error', TEST_UI.onError);
 		}
 	};
 
